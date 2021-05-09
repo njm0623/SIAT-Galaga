@@ -1,0 +1,882 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=0.7, maximum-scale=0.7, user-scalable=no">
+    <title>갤러그</title>
+</head>
+<style>
+    * {
+        user-select: none;
+    }
+
+    button {
+        outline: none;
+    }
+
+    #wrap {
+        border: 1px solid black;
+        width: 550px;
+        height: 680px;
+
+        margin: 15px auto;
+
+        background-color: indigo;
+        
+        box-shadow: 1px 1px 10px 1px black;
+        border-radius: 10px;
+    }
+
+    #screen {
+        border: 1px solid black;
+        width: 500px;
+        height: 550px;
+
+        margin: 20px auto;
+        margin-bottom: 15px;
+
+        background-image: url("https://raw.githubusercontent.com/njm0623/Project/master/space.jpg");
+        background-size: cover;
+
+        border-radius: 10px;
+
+        position: relative;
+    }
+
+    #button {
+        width: 500px;
+        height: 80px;
+
+        margin: 0 auto;
+    }
+
+    #button_arrow {
+        width: 200px;
+        height: 80px;
+        margin: 0 10px;
+        margin-left: 30px;
+
+        float: left;
+        position: relative;
+    }
+
+    #button_attack {
+        width: 240px;
+        height: 80px;
+        margin: 0 10px;
+
+        float: right;
+    }
+
+    .arrow {
+        width: 40px;
+        height: 40px;
+        
+        background-color: wheat;
+    }
+
+    #up {
+        position: relative;
+        left: 80px;
+
+        box-shadow: 0px -1px 5px 1px black;
+        border-radius: 7px 7px 0 0;
+    }
+
+    #left {
+        position: relative;
+        top: 20px;
+        left: -6px;
+
+        box-shadow: -1px 0px 5px 1px black;
+        border-radius: 7px 0 0 7px;
+    }
+
+    #right {
+        position: relative;
+        top: 20px;
+        left: 29px;
+
+        box-shadow: 1px 0px 5px 1px black;
+        border-radius: 0 7px 7px 0;
+    }
+
+    #down {
+        position: relative;
+        top: 40px;
+        left: -57px;
+
+        box-shadow: 0px 1px 5px 1px black;
+        border-radius: 0 0 7px 7px;
+    }
+
+    .attack {
+        width: 60px;
+        height: 60px;
+
+        margin: 10px 5px;
+
+        border: none;
+        border-radius: 100px;
+        box-shadow: 1px 1px 30px 1px black;
+
+        position: relative;
+    }
+
+    #attack_A {
+        background-color: lightcoral;
+        font-size: x-large;
+        font-weight: 700;
+
+        position: relative;
+        top: -7px;
+    }
+
+    #attack_B {
+        background-color: lightskyblue;
+        font-size: x-large;
+        font-weight: 700;
+
+        position: relative;
+        top: -7px;
+    }
+
+    #sound {
+        background-color: lightgreen;
+    }
+
+    #rocket {
+        transition: 0.01s;
+    }
+
+    .enemy {
+        transition: 0.1s;
+    }
+
+    .eBullet {
+        transition: 0.1s;
+    }
+
+    .rock {
+        transition: 0.05s;
+    }
+
+    #nav {
+        width: 500px;
+        height: 30px;
+
+        position: relative;
+    }
+
+    .state {
+        font-size: x-large;
+        font-weight: 900;
+        color: white;
+    }
+
+    #score {
+        position: absolute;
+        left: 10px;
+    }
+    
+    #life {
+        position: absolute;
+        left: 195px;
+    }
+
+    #bomb {
+        position: absolute;
+        right: 10px;
+    }
+
+    #message_gameStart {
+        width: 500px;
+        height: 80px;
+
+        color: lime;
+        text-align: center;
+
+        font-size: x-large;
+        font-weight: 900;
+    }
+
+    #title {
+        margin: 100px 0 30px 0;
+        color: yellow;
+    }
+
+    .manual {
+        margin: 0;
+    }
+
+    #start {
+        text-decoration: white;
+        text-align: center;
+
+        margin-left: 210px;
+        margin-top: 180px;
+
+        font-size: x-large;
+        font-weight: 900;
+    }
+
+    #message_gameOver {
+        width: 500px;
+        height: 80px;
+
+        color: yellow;
+        text-align: center;
+
+        font-size: 60px;
+        font-weight: 900;
+
+        line-height: 350px;
+    }
+
+    #restart {
+        text-decoration: white;
+        text-align: center;
+
+        margin-left: 210px;
+        margin-top: 100px;
+
+        font-size: x-large;
+        font-weight: 900;
+    }
+</style>
+<body>
+    <div id="wrap">
+        <div id="screen">
+            <div id="nav">
+                <span class="state" id="score">Score: 0</span>
+                <span class="state" id="life">
+                    <img src="https://raw.githubusercontent.com/njm0623/Project/master/life.png" alt="life" id="life2">
+                    <img src="https://raw.githubusercontent.com/njm0623/Project/master/life.png" alt="life" id="life1">
+                    <img src="https://raw.githubusercontent.com/njm0623/Project/master/life.png" alt="life" id="life0">
+                </span>
+                <span class="state" id="bomb">
+                    <img src="https://raw.githubusercontent.com/njm0623/Project/master/missile.png" alt="bomb" id="bomb0">
+                    <img src="https://raw.githubusercontent.com/njm0623/Project/master/missile.png" alt="bomb" id="bomb1">
+                </span>
+            </div>
+            <img src="https://raw.githubusercontent.com/njm0623/Project/master/rocket.png" alt="이미지 로딩 실패" id="rocket">
+        </div>
+        <div id="button">
+            <div id="button_arrow">
+                <button class="arrow" id="up">↑</button>
+                <button class="arrow" id="left">←</button>
+                <button class="arrow" id="right">→</button>
+                <button class="arrow" id="down">↓</button>
+            </div>
+            <div id="button_attack">
+                <button class="attack" id="attack_A">A</button>
+                <button class="attack" id="attack_B">B</button>
+                <button class="attack" id="sound"><img src="https://raw.githubusercontent.com/njm0623/Project/master/sound.png" alt="sound" id="sound_img"></button>
+            </div>
+        </div>
+        <audio src="https://docs.google.com/uc?export=open&id=1oTfEJgFs8tsrDg_Qo9qPeL13GWbiFfhj" autoplay="autoplay" loop="loop" preload="auto" id="BGM"></audio>
+    </div>
+
+    <script>
+        let rocket = document.querySelector("#rocket")
+        let screen = document.querySelector("#screen")
+        let arrow_up = document.querySelector("#up")
+        let arrow_left = document.querySelector("#left")
+        let arrow_right = document.querySelector("#right")
+        let arrow_down = document.querySelector("#down")
+        let attack_A = document.querySelector("#attack_A")
+        let attack_B = document.querySelector("#attack_B")
+        let sound = document.querySelector("#sound")
+        let sound_img = document.querySelector("#sound_img")
+        let BGM = document.querySelector("#BGM")
+        let message_score = document.querySelector("#score")
+        let message_life = document.querySelector("#life")
+        let message_bomb = document.querySelector("#bomb")
+
+        let life_span = document.querySelector("#life")
+        let life0 = document.querySelector("#life0")
+        let life1 = document.querySelector("#life1")
+        let life2 = document.querySelector("#life2")
+
+        let bomb_span = document.querySelector("#bomb")
+        let bomb0 = document.querySelector("#bomb0")
+        let bomb1 = document.querySelector("#bomb1")
+        
+        let isStart =  false
+        let isConflict = true
+        let isAutoShoot = false
+        let isSound = true
+        
+        let numScore = 0
+        let numLife = 3
+        let numBomb = 2
+
+        let img_life = 0
+        let img_bomb = 0
+        
+        const block = 5
+        let currentDirect = 0
+
+        let isConflict_timer = 0
+        let bullet_create_timer = 0
+        let bullet_shoot_timer = 0
+        let enemy_move_timer = 0
+        let eBullet_create_timer = 0
+        let eBullet_move_timer = 0
+        let rock_move_timer = 0
+        let auto_shoot_timer = 0
+        let enemy_create_timer = 0    
+        let rock_create_timer = 0
+        let rocket_move_timer = 0
+
+        let audio_conflict = new Audio("https://docs.google.com/uc?export=open&id=1REyM-rZ7B9uYoNtYa2D9sk_pFVYP5Neg")
+        let audio_bomb = new Audio("https://docs.google.com/uc?export=open&id=1X6AP92K0BjnNlMSOd_TxzgUtekj-m8uw")
+        
+        const [left, up, right, down] = [37, 38, 39, 40]
+        let [rocket_x, rocket_y] = [44, 96]
+        
+        rocket.style.position = "absolute"
+
+        const rocket_print = () => {
+            rocket.style.left = `${rocket_x * block}px`
+            rocket.style.top = `${rocket_y * block}px`
+
+            // console.log(rocket.style.left)
+            // console.log(rocket.style.top)
+        }
+        rocket_print()
+
+        start()
+        
+        arrow_up.onclick = () => {
+            currentDirect = up
+            if (rocket_move_timer == 0) {
+                rocket_move_timer = setInterval(move_rocket, 50)
+            }
+        }
+
+        arrow_left.onclick = () => {
+            currentDirect = left
+            if (rocket_move_timer == 0) {
+                rocket_move_timer = setInterval(move_rocket, 50)
+            }
+        }
+
+        arrow_right.onclick = () => {
+            currentDirect = right
+            if (rocket_move_timer == 0) {
+                rocket_move_timer = setInterval(move_rocket, 50)
+            }
+        }
+
+        arrow_down.onclick = () => {
+            currentDirect = down
+            if (rocket_move_timer == 0) {
+                rocket_move_timer = setInterval(move_rocket, 50)
+            }
+        }
+
+        attack_A.onclick = () => {
+            isAutoShoot = !isAutoShoot
+            if (isAutoShoot) {
+                auto_shoot_timer = setInterval(create_bullet, 300);
+            }
+            else {
+                clearInterval(auto_shoot_timer)
+                auto_shoot_timer = 0
+            }
+        }
+
+        attack_B.onclick = () => {
+            bomb()
+        }
+
+        sound.onclick = () => {
+            if (sound) {
+                sound_img.setAttribute("src", "https://raw.githubusercontent.com/njm0623/Project/master/mute.png")
+                BGM.volume = 0.0
+                audio_conflict.volume = 0.0
+                audio_bomb.volume = 0.0
+                sound = false
+            }
+            else {
+                sound_img.setAttribute("src", "https://raw.githubusercontent.com/njm0623/Project/master/sound.png")
+                BGM.volume = 1.0
+                audio_conflict.volume = 1.0
+                audio_bomb.volume = 1.0
+                sound = true
+            }
+        }
+
+        document.body.addEventListener("keydown", (event) => {
+            if (event.keyCode == 13 || event.keyCode == 32) {
+                event.preventDefault()
+            }
+            // move_rocket(event.keyCode)
+            currentDirect = event.keyCode
+            if (rocket_move_timer == 0) {
+                rocket_move_timer = setInterval(move_rocket, 50)
+            }
+        })
+
+        document.body.addEventListener("keyup", (event) => {
+            if (event.keyCode == 32) {
+                event.preventDefault();
+                bomb()
+            }
+
+            if (event.keyCode == 13) {
+                event.preventDefault()
+                isAutoShoot = !isAutoShoot
+                if (isAutoShoot) {
+                    auto_shoot_timer = setInterval(create_bullet, 500);
+                }
+                else {
+                    clearInterval(auto_shoot_timer)
+                    auto_shoot_timer = 0
+                }
+            }
+        })
+
+        function start() {
+            let message_gameStart = document.createElement("h1")
+            message_gameStart.setAttribute("id", "message_gameStart")
+            message_gameStart.innerHTML = `<h2 id="title">★우주전쟁★</h2><br><h3 class="manual">버튼 A, Enter: 자동 발사</h3><br><h3 class="manual">버튼 B, SpaceBar: 폭탄</h3><br>`
+            screen.appendChild(message_gameStart)
+
+            let start = document.createElement("button")
+            start.setAttribute("id", "start")
+            start.textContent = "Start"
+            screen.appendChild(start)
+
+            start.onclick = () => {
+                screen.removeChild(message_gameStart)
+                screen.removeChild(start)
+                if (auto_shoot_timer != 0) {
+                    clearInterval(auto_shoot_timer)
+                    auto_shoot_timer = 0
+                }
+                if (rocket_move_timer != 0) {
+                    clearInterval(rocket_move_timer)
+                    rocket_move_timer = 0
+                }
+                isStart = true
+                rocket_x = 44
+                rocket_y = 96
+                rocket_print()
+                enemy_create_timer = setInterval(create_enemy, 5000)        
+                rock_create_timer = setInterval(create_rock, 20000)
+            }
+        }
+
+        function move_rocket() {
+            switch (currentDirect) {
+                case left:
+                    rocket_x < 1 ? rocket_x : rocket_x -= 1
+                    break
+                case up:
+                    rocket_y < 1 ? rocket_y : rocket_y -= 1
+                    break
+                case right:
+                    rocket_x > 86 ? rocket_x : rocket_x += 1
+                    break
+                case down:
+                    rocket_y > 94 ? rocket_y : rocket_y += 1
+                    break
+            }
+            rocket_print()
+        }
+
+        function create_bullet() {
+            let bullet_img = document.createElement("img")
+            bullet_img.setAttribute("src", "https://raw.githubusercontent.com/njm0623/Project/master/bullet.png")
+            bullet_img.setAttribute("class", "bullet")
+            screen.appendChild(bullet_img)
+            bullet_img.style.position = "absolute"
+            bullet_img.style.left = `${rocket_x * block + 16}px`
+            bullet_img.style.top = `${rocket_y * block - 32}px`
+
+            if (bullet_shoot_timer == 0) {
+                bullet_shoot_timer = setInterval(shoot_bullet, 50)
+            }
+        }
+        
+        function shoot_bullet() {            
+            let bullets = document.querySelectorAll(".bullet")
+            for (bullet of bullets) {
+                let b_top = parseInt(bullet.style.top)
+                
+                if (b_top <= 0) {
+                    screen.removeChild(bullet)
+                }                
+
+                b_top -= block * 2
+                bullet.style.top = `${b_top}px`
+            }
+            enemy_conflict()
+        }
+
+        function create_enemy() {
+            let enemy_img = document.createElement("img")
+            let e_left = Math.floor(Math.random() * 440)
+            enemy_img.setAttribute("src", "https://raw.githubusercontent.com/njm0623/Project/master/enemy.png")
+            enemy_img.setAttribute("class", "enemy")
+            screen.appendChild(enemy_img)
+            enemy_img.style.position = "absolute"
+            enemy_img.style.left = `${e_left}px`
+            enemy_img.style.top = `20px`
+            
+            if (enemy_move_timer == 0){
+                enemy_move_timer = setInterval(move_enemy, 1000)
+            }
+
+            if (eBullet_create_timer == 0) {
+                eBullet_create_timer =  setInterval(create_eBullet, 1200);
+            }
+        }
+
+        function move_enemy() {
+            let enemies = document.querySelectorAll(".enemy")
+            for (enemy of enemies) {
+                let e_top = parseInt(enemy.style.top)
+                let e_left = parseInt(enemy.style.left)
+
+                let randomNum = Math.floor(Math.random() * 2)
+                
+                if (e_top >= 480) {
+                    screen.removeChild(enemy)
+                }
+
+                if (randomNum == 0) {
+                    e_left -= block * 2 * 3
+                }
+                else {
+                    e_left += block * 2 * 3
+                }
+
+                e_top += block * 2 * 2
+                enemy.style.top = `${e_top}px`
+                
+                if (e_left >= 0 && e_left <= 440) {
+                    enemy.style.left = `${e_left}px`
+                }
+            }
+            rocket_conflict()
+        }
+
+        function create_eBullet() {
+            let enemies = document.querySelectorAll(".enemy")
+            for (enemy of enemies) {
+                let e_top = parseInt(enemy.style.top)
+                let e_left = parseInt(enemy.style.left)
+
+                let eBullet_img = document.createElement("img")
+                eBullet_img.setAttribute("src", "https://raw.githubusercontent.com/njm0623/Project/master/enemy_bullet.png")
+                eBullet_img.setAttribute("class", "eBullet")
+                screen.appendChild(eBullet_img)
+                eBullet_img.style.position = "absolute"
+                eBullet_img.style.left = `${e_left + 8}px`
+                eBullet_img.style.top = `${e_top + 24}px`
+                
+                if (eBullet_move_timer == 0){
+                    eBullet_move_timer = setInterval(move_eBullet, 100)
+                }
+            }
+        }
+
+        function move_eBullet() {
+            let eBullets = document.querySelectorAll(".eBullet")
+            for (eBullet of eBullets) {
+                let eB_top = parseInt(eBullet.style.top)
+                
+                if (eB_top >= 510) {
+                    screen.removeChild(eBullet)
+                }
+
+                eB_top += block * 2
+                eBullet.style.top = `${eB_top}px`
+            }
+            rocket_conflict()
+        }
+
+        function create_rock() {
+            let rock_img = document.createElement("img")
+            let r_left = Math.floor(Math.random() * 3)
+            r_left = r_left * 160 + 25
+            rock_img.setAttribute("src", "https://raw.githubusercontent.com/njm0623/Project/master/rock.png")
+            rock_img.setAttribute("class", "rock")
+            screen.appendChild(rock_img)
+            rock_img.style.position = "absolute"
+            rock_img.style.left = `${r_left}px`
+            rock_img.style.top = `20px`
+            
+            if (rock_move_timer == 0){
+                rock_move_timer = setInterval(move_rock, 50)
+            }
+        }
+
+        function move_rock() {
+            let rocks = document.querySelectorAll(".rock")
+            for (rock of rocks) {
+                let r_top = parseInt(rock.style.top)
+                
+                if (r_top >= 400) {
+                    screen.removeChild(rock)
+                }
+
+                r_top += block * 2
+                rock.style.top = `${r_top}px`
+            }
+            rocket_conflict()
+        }
+
+        function bomb() {
+            if (isStart) {
+                if (numBomb > 0) {
+                    let bomb_img = document.createElement("img")
+                    bomb_img.setAttribute("src", "https://raw.githubusercontent.com/njm0623/Project/master/bomb.png")
+                    screen.appendChild(bomb_img)
+                    bomb_img.style.position = "absolute"
+                    bomb_img.style.left = `0px`
+                    bomb_img.style.top = `20px`
+    
+                    setTimeout(function() {
+                        screen.removeChild(bomb_img)
+                    }, 500);
+    
+                    audio_bomb.play()
+    
+                    let enemies = document.querySelectorAll(".enemy")
+                    let rocks = document.querySelectorAll(".rock")
+                    let eBullets = document.querySelectorAll(".eBullet")
+        
+                    for (enemy of enemies) {
+                        screen.removeChild(enemy)
+                    }
+        
+                    for (eBullet of eBullets) {
+                        screen.removeChild(eBullet)
+                    }
+        
+                    for (rock of rocks) {
+                        screen.removeChild(rock)
+                    }
+    
+                    numBomb--
+                    
+                    img_bomb == 0 ? bomb_span.removeChild(bomb0) : bomb_span.removeChild(bomb1)
+                    img_bomb++
+                }
+            }
+            else {
+                let bomb_img = document.createElement("img")
+                bomb_img.setAttribute("src", "https://raw.githubusercontent.com/njm0623/Project/master/bomb.png")
+                screen.appendChild(bomb_img)
+                bomb_img.style.position = "absolute"
+                bomb_img.style.left = `0px`
+                bomb_img.style.top = `20px`
+
+                setTimeout(function() {
+                    screen.removeChild(bomb_img)
+                }, 500);
+
+                audio_bomb.play()
+            }
+        }
+
+        function rocket_conflict() {
+            if (isConflict) {
+                let rocket = document.querySelector("#rocket")
+                let enemies = document.querySelectorAll(".enemy")
+                let rocks = document.querySelectorAll(".rock")
+                let eBullets = document.querySelectorAll(".eBullet")
+    
+                let rocket_top = parseInt(rocket.style.top)
+                let rocket_left = parseInt(rocket.style.left)
+    
+                for (enemy of enemies) {
+                    let enemy_top = parseInt(enemy.style.top)
+                    let enemy_left = parseInt(enemy.style.left)
+    
+                    if ((((enemy_top - 50) <= rocket_top) && (rocket_top <= (enemy_top + 20)))
+                        && (((enemy_left - 50) <= rocket_left) && (rocket_left <= (enemy_left + 20)))) {
+                            screen.removeChild(enemy)
+                            rocket.setAttribute("src", "https://raw.githubusercontent.com/njm0623/Project/master/rocket_explosion.png")
+                            setTimeout(function() {
+                                rocket_x = 44
+                                rocket_y = 96
+                                rocket_print()
+                                rocket.setAttribute("src", "https://raw.githubusercontent.com/njm0623/Project/master/rocket.png")
+                            }, 300);
+                            audio_conflict.play()
+                            img_life == 0 ? life_span.removeChild(life0) : img_life == 1 ? life_span.removeChild(life1) : life_span.removeChild(life2)
+                            img_life++
+                            clearInterval(auto_shoot_timer)
+                            clearInterval(rocket_move_timer)
+                            auto_shoot_timer = 0
+                            rocket_move_timer = 0
+                            isAutoShoot = false
+                            numLife--
+                            isConflict = false
+                            if (isConflict_timer == 0) {
+                                isConflict_timer = setTimeout(function() {
+                                    isConflict = true
+                                    isConflict_timer = 0
+                                }, 2000)
+                            }
+                    }
+                }
+    
+                for (eBullet of eBullets) {
+                    let eBullet_top = parseInt(eBullet.style.top)
+                    let eBullet_left = parseInt(eBullet.style.left)
+    
+                    if ((((eBullet_top - 50) <= rocket_top) && (rocket_top <= (eBullet_top)))
+                        && (((eBullet_left - 50) <= rocket_left) && (rocket_left <= (eBullet_left)))) {
+                            screen.removeChild(eBullet)
+                            rocket.setAttribute("src", "https://raw.githubusercontent.com/njm0623/Project/master/rocket_explosion.png")
+                            setTimeout(function() {
+                                rocket_x = 44
+                                rocket_y = 96
+                                rocket_print()
+                                rocket.setAttribute("src", "https://raw.githubusercontent.com/njm0623/Project/master/rocket.png")
+                            }, 300);
+                            audio_conflict.play()
+                            img_life == 0 ? life_span.removeChild(life0) : img_life == 1 ? life_span.removeChild(life1) : life_span.removeChild(life2)
+                            img_life++
+                            clearInterval(auto_shoot_timer)
+                            clearInterval(rocket_move_timer)
+                            auto_shoot_timer = 0
+                            rocket_move_timer = 0
+                            isAutoShoot = false
+                            numLife--
+                            isConflict = false
+                            if (isConflict_timer == 0) {
+                                isConflict_timer = setTimeout(function() {
+                                    isConflict = true
+                                    isConflict_timer = 0
+                                }, 2000)
+                            }
+                    }
+                }
+    
+                for (rock of rocks) {
+                    let rock_top = parseInt(rock.style.top)
+                    let rock_left = parseInt(rock.style.left)
+    
+                    if ((((rock_top - 50) <= rocket_top) && (rocket_top <= (rock_top + 100)))
+                        && (((rock_left - 50) <= rocket_left) && (rocket_left <= (rock_left + 100)))) {
+                            rocket.setAttribute("src", "https://raw.githubusercontent.com/njm0623/Project/master/rocket_explosion.png")
+                            setTimeout(function() {
+                                rocket_x = 44
+                                rocket_y = 96
+                                rocket_print()
+                                rocket.setAttribute("src", "https://raw.githubusercontent.com/njm0623/Project/master/rocket.png")
+                            }, 300);
+                            audio_conflict.play()
+                            img_life == 0 ? life_span.removeChild(life0) : img_life == 1 ? life_span.removeChild(life1) : life_span.removeChild(life2)
+                            img_life++
+                            clearInterval(auto_shoot_timer)
+                            clearInterval(rocket_move_timer)
+                            auto_shoot_timer = 0
+                            rocket_move_timer = 0
+                            isAutoShoot = false
+                            numLife--
+                            isConflict = false
+                            if (isConflict_timer == 0) {
+                                isConflict_timer = setTimeout(function() {
+                                    isConflict = true
+                                    isConflict_timer = 0
+                                }, 2000)
+                            }
+                    }
+                }
+
+                if (numLife == 0) {
+                    game_over()
+                }
+            }
+        }
+
+        function enemy_conflict() {
+            let enemies = document.querySelectorAll(".enemy")
+            for (enemy of enemies) {                
+                let enemy_top = parseInt(enemy.style.top)
+                let enemy_left = parseInt(enemy.style.left)
+                
+                let bullets = document.querySelectorAll(".bullet")
+                for (bullet of bullets) {
+                    let bullet_top = parseInt(bullet.style.top)
+                    let bullet_left = parseInt(bullet.style.left)
+
+                    if ((((enemy_top - 20) <= bullet_top) && (bullet_top <= (enemy_top + 20)))
+                        && (((enemy_left - 20) <= bullet_left) && (bullet_left <= (enemy_left + 20)))) {
+                            
+                            enemy.setAttribute("src", "https://raw.githubusercontent.com/njm0623/Project/master/enemy_explosion.png")
+                            setTimeout(function() {
+                                screen.removeChild(enemy)
+                            }, 300);
+                            audio_conflict.play()
+                            // screen.removeChild(enemy)
+                            screen.removeChild(bullet)
+                            numScore++
+                            message_score.textContent = `Score: ${numScore}`
+                    }
+                }
+            }
+        }
+
+        function game_over() {
+            let rocket = document.querySelector("#rocket")
+            let bullets = document.querySelectorAll(".bullet")
+            let enemies = document.querySelectorAll(".enemy")
+            let rocks = document.querySelectorAll(".rock")
+            let eBullets = document.querySelectorAll(".eBullet")
+
+            screen.removeChild(rocket)
+    
+            for (enemy of enemies) {
+                screen.removeChild(enemy)
+            }
+
+            for (eBullet of eBullets) {
+                screen.removeChild(eBullet)
+            }
+
+            for (rock of rocks) {
+                screen.removeChild(rock)
+            }
+
+            for (bullet of bullets) {
+                screen.removeChild(bullet)
+            }
+
+            clearInterval(bullet_create_timer)
+            clearInterval(bullet_shoot_timer)
+            clearInterval(enemy_move_timer)
+            clearInterval(eBullet_create_timer)
+            clearInterval(eBullet_move_timer)
+            clearInterval(rock_move_timer)
+            clearInterval(auto_shoot_timer)
+            clearInterval(enemy_create_timer)
+            clearInterval(rock_create_timer)
+            clearInterval(rocket_move_timer)
+
+            let message_gameOver = document.createElement("h1")
+            message_gameOver.setAttribute("id", "message_gameOver")
+            message_gameOver.textContent = "Game Over"
+            screen.appendChild(message_gameOver)
+
+            let restart = document.createElement("button")
+            restart.setAttribute("id", "restart")
+            restart.textContent = "재도전"
+            screen.appendChild(restart)
+
+            restart.onclick = () => {
+                location.reload()
+            }
+        }
+    </script>
+</body>
+</html>
